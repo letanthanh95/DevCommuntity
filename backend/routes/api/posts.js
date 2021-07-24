@@ -15,15 +15,15 @@ router.post('/',[auth,[
         return res.status(400).json({errors:errors.array()})
     }
     try {
-        const user=await User.findById({user:req.user.id}).select('-password');
-        const newPost={
+        const user=await User.findById(req.user.id).select('-password');
+        const newPost=new Post({
             text:req.body.text,
-            name:user.avatar,
+            name:user.name,
+            avatar:user.avatar,
             user:req.user.id
-
-    }
-    const post=await newPost.save();
-    res.json({post})
+    })
+    const post=await newPost.save()
+    res.json(post)
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error')
@@ -121,12 +121,13 @@ router.post('/comment/:id',[auth,[
         return res.status(400).json({errors:errors.array()})
     }
     try {
-        const user=await User.findById({user:req.user.id}).select('-password');
+        const user=await User.findById(req.user.id).select('-password');
         const post=await Post.findById(req.params.id)
         const newComment={
             text:req.body.text,
-            name:user.avatar,
-            user:req.user.id
+            name:user.name,
+            user:req.user.id,
+            avatar:user.avatar
 
         }
         post.comments.unshift(newComment)

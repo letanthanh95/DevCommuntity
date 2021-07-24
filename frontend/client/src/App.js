@@ -1,5 +1,7 @@
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect } from 'react'
+import { LOGOUT } from './action/types';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Nav from '../src/components/layout/Navbar'
 import Landing from '../src/components/layout/Landing';
@@ -21,12 +23,17 @@ import{Provider} from 'react-redux'; //combine react and redux
 import store from './store'
 import setAuthToken from './ultils/setAuthToken';
 import Posts from './components/posts/Posts';
-if(localStorage.token){
-  setAuthToken(localStorage.token)
-}
+import GetPost from './components/post/Post';
 const  App=()=> {
   useEffect(()=>{
+    if(localStorage.token){
+      setAuthToken(localStorage.token)
+    }
     store.dispatch(loadUser())
+
+    window.addEventListener('storage', () => {
+      if (!localStorage.token) store.dispatch({ type: LOGOUT });
+    });
   },[])
   return (
     <Provider store={store}>
@@ -39,15 +46,15 @@ const  App=()=> {
           <Switch>
             <Route exact path="/register" component={Register}/>
             <Route   path="/login" component={Login}/>
-            <Route   path="/profiles" component={Profiles}/>
-            <Route   path="/profile/:id" component={Profile}/>
+            <PrivateRoute   path="/profiles" component={Profiles}/>
+            <PrivateRoute   path="/profile/:id" component={Profile}/>
             <PrivateRoute  path="/dashboard" component={Dashboard}/>
             <PrivateRoute  path="/create-profile" component={CreateProfile}/>
             <PrivateRoute  path="/edit-profile" component={EditProfile}/>
             <PrivateRoute  path="/add-experience" component={AddExp}/>
             <PrivateRoute  path="/add-education" component={AddEducation}/>
             <PrivateRoute  path="/posts" component={Posts}/>
-            
+            <PrivateRoute  path="/post/:id" component={GetPost}/>
           </Switch>
         </section>
         </>

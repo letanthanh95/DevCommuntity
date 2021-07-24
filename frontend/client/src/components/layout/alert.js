@@ -6,7 +6,7 @@ const Alert = ({alerts})=>alerts!==null && alerts.length>0 && alerts.map(alert=>
         {alert.msg}
     </div>
 ));
-Alert.PropTypes={
+Alert.propTypes={
     alerts:PropTypes.array.isRequired
 }
 const mapStateToProps=state=>({

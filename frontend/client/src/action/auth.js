@@ -1,4 +1,5 @@
 import axios from 'axios'
+import api from '../ultils/api';
 import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
@@ -17,7 +18,7 @@ export const loadUser=()=>async dispatch=>{
         setAuthToken(localStorage.token)
     }
     try {
-        const res=await axios.get('http://127.0.0.1:8000/api/auth')
+        const res=await api.get('http://127.0.0.1:8000/api/auth')
         dispatch({
             type:USER_LOADED,
             payload:res.data
@@ -40,7 +41,7 @@ export const register =({name,email,password})=>async dispatch=>{
     }
     const body=JSON.stringify({name,email,password});
     try {
-        const res=await axios.post('http://127.0.0.1:8000/api/users/register',body,config)
+        const res=await api.post('http://127.0.0.1:8000/api/users/register',body,config)
         dispatch({
             type:REGISTER_SUCCESS,
             payload:res.data
@@ -75,7 +76,7 @@ export const login =(email,password)=>async dispatch=>{
     const body=JSON.stringify({email,password});
     try {
         
-        const res=await axios.post('http://127.0.0.1:8000/api/auth/login',body,config)
+        const res=await api.post('http://127.0.0.1:8000/api/auth/login',body,config)
         
         dispatch({
             type:LOGIN_SUCCESS,
@@ -84,13 +85,14 @@ export const login =(email,password)=>async dispatch=>{
         dispatch(loadUser())
     } catch (error) {
        
-        const errors=error.response.data.errors
+        // const errors=error.response.data.errors
         
-        if(errors){
-            errors.forEach(error => {dispatch(setAlert(error.msg,'danger'))
+        // if(errors){
+        //     errors.forEach(error => {dispatch(setAlert(error.msg,'danger'))
                 
-            });
-        }
+        //     });
+        // }
+        dispatch(setAlert("Authentication Fail!",'danger'))
         dispatch({
             type:LOGIN_FAIL
         })

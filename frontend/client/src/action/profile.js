@@ -1,4 +1,5 @@
 import axios from 'axios'
+import api from '../ultils/api';
 import {setAlert} from './alert'
 import {
     CLEAR_PROFILE,
@@ -7,13 +8,14 @@ import {
     UPDATE_PROFILE,
     DELETE_ACCOUNT,
     GET_PROFILES,
-    GET_REPOS
+    GET_REPOS,
+    ERROR_REPOS
 } from './types'
 
 //Get current users profiles
 export const getCurrentProfile=()=>async dispatch=>{
     try {
-        const res=await axios.get('http://127.0.0.1:8000/api/profile/me');
+        const res=await api.get('/profile/me');
         dispatch({
             type:GET_PROFILE,
             payload:res.data
@@ -30,9 +32,9 @@ export const getCurrentProfile=()=>async dispatch=>{
 
 //Get All users profiles
 export const getProfiles=()=>async dispatch=>{
-    dispatch({type:CLEAR_PROFILE})
+    
     try {
-        const res=await axios.get('http://127.0.0.1:8000/api/profile');
+        const res=await api.get('/profile');
         console.log(res.data)
         dispatch({
             type:GET_PROFILES,
@@ -53,12 +55,14 @@ export const getProfiles=()=>async dispatch=>{
 export const getProfileByID=(userId)=>async dispatch=>{
     
     try {
-        const res=await axios.get(`http://127.0.0.1:8000/api/profile/${userId}`);
+        const res=await api.get(`/profile/user/${userId}`);
+        console.log(res.data)
         dispatch({
             type:GET_PROFILE,
             payload:res.data
         })
     } catch (error) {
+        console.log(error)
         dispatch({type:CLEAR_PROFILE})
         dispatch({
             type:PROFILE_ERROR,
@@ -71,19 +75,21 @@ export const getProfileByID=(userId)=>async dispatch=>{
 
 //Get Github repos
 export const getGithubRepos=(username)=>async dispatch=>{
-    dispatch({type:CLEAR_PROFILE})
+    
     try {
-        const res=await axios.get(`http://127.0.0.1:8000/api/profile/github/${username}`);
+        const res=await api.get(`/profile/github/${username}`);
+        
         dispatch({
             type:GET_REPOS,
             payload:res.data
         })
     } catch (error) {
-        dispatch({type:CLEAR_PROFILE})
-        dispatch({
-            type:PROFILE_ERROR,
-            payload:{msg:error.response.statusText,status:error.response.status}
-        })
+        console.log(error.response)
+        // dispatch({
+        //     type:ERROR_REPOS,
+        //     payload:{msg:error.response.statusText,status:error.response.status}
+        // })
+       
     }
 }
 
@@ -97,15 +103,14 @@ export const createProfile=(formData,history,edit=false)=>async dispatch=>{
             }
         }
 
-        const res=await axios.post('http://127.0.0.1:8000/api/profile',formData,config)
-        console.log(res)
+        const res=await api.post('/profile',formData,config)
         dispatch({
             type:GET_PROFILE,
             payload:res.data
         })
         dispatch(setAlert(edit?'Profile Updated':'Profile Created','success'))
         if(!edit){
-            history.push('/dashboard')
+            history.push('/profiles')
         }
     } catch (error) {
         //const errors=error.response.data.errors
@@ -133,7 +138,7 @@ export const addExperience=(formData,history)=>async dispatch =>{
             }
         }
 
-        const res=await axios.put('http://127.0.0.1:8000/api/profile/experience',formData,config)
+        const res=await api.put('/profile/experience',formData,config)
         
         dispatch({
             type:UPDATE_PROFILE,
@@ -172,7 +177,7 @@ export const addEducation=(formData,history)=>async dispatch =>{
             }
         }
 
-        const res=await axios.put('http://127.0.0.1:8000/api/profile/education',formData,config)
+        const res=await api.put('/profile/education',formData,config)
         
         dispatch({
             type:UPDATE_PROFILE,
@@ -203,7 +208,7 @@ export const addEducation=(formData,history)=>async dispatch =>{
 
 export const deleteExp=id=>async dispatch=>{
     try {
-        const res =await axios.delete(`http://127.0.0.1:8000/api/profile/experience/${id}`)
+        const res =await api.delete(`/profile/experience/${id}`)
         
         dispatch({
             type:UPDATE_PROFILE,
@@ -224,7 +229,7 @@ export const deleteExp=id=>async dispatch=>{
 
 export const deleteEducation=id=>async dispatch=>{
     try {
-        const res =await axios.delete(`http://127.0.0.1:8000/api/profile/education/${id}`)
+        const res =await api.delete(`/profile/education/${id}`)
         dispatch({
             type:UPDATE_PROFILE,
             payload:res.data
@@ -244,7 +249,7 @@ export const deleteEducation=id=>async dispatch=>{
 export const deleteProfile=()=>async dispatch=>{
     if(window.confirm('Are you sure? This can Not be undone')){
         try {
-            const res =await axios.delete(`http://127.0.0.1:8000/api/profile`)
+            const res =await api.delete(`/profile`)
             dispatch({
                 type:CLEAR_PROFILE,
                 

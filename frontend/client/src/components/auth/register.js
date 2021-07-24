@@ -60,7 +60,7 @@ const Register=({setAlert,register,isAuthenticated})=>{
     return(
         <>
         <h1 className="large text-primary">Sign Up</h1>
-      <p className="lead"><i class="fas fa-user"></i> Create Your Account</p>
+      <p className="lead"><i className="fas fa-user"></i> Create Your Account</p>
         {/* {error?(<p style={{color:"red"}}>{message}</p>):(<p style={{color:"green"}}>{message}</p>)} */}
       <form className="form" onSubmit={e=>submit(e)}>
         <div className="form-group">

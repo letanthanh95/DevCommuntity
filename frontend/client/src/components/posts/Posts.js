@@ -5,12 +5,12 @@ import Spinner from '../layout/Spinner'
 import PostItem from './PostItem'
 import PostForm from './PostForm'
 import {getPosts} from '../../action/post'
-const Posts = ({ getPosts, post: { posts } }) => {
+const Posts = ({ getPosts, post: { posts,loading } }) => {
     useEffect(() => {
       getPosts();
     }, [getPosts]);
   
-    return (
+    return loading?(<Spinner></Spinner>): (
       <>
         <h1 className="large text-primary">Posts</h1>
         <p className="lead">
